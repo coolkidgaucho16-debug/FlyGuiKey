@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fly Key System</title>
+    <title>Fly Key System - 100 Keys</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
         body{background:#0a0a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-        .container{background:linear-gradient(145deg,#1a1a2e,#16213e);padding:40px;border-radius:24px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.1)}
+        .container{background:linear-gradient(145deg,#1a1a2e,#16213e);padding:40px;border-radius:24px;max-width:550px;width:100%;box-shadow:0 20px 60px rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.1)}
         .logo{text-align:center;margin-bottom:30px}
         .logo h1{color:#00d4ff;font-size:28px;font-weight:800}
         .logo p{color:#8899aa;font-size:14px;margin-top:5px}
@@ -22,7 +22,7 @@
         .key-area{display:none;animation:fadeIn 0.5s}
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         .key-display{background:#0d0d1f;padding:18px;border-radius:12px;margin:20px 0;text-align:center;border:2px solid rgba(0,255,136,0.2)}
-        .key-display span{color:#00ff88;font-family:monospace;font-size:20px;word-break:break-all;font-weight:700;letter-spacing:1px}
+        .key-display span{color:#00ff88;font-family:monospace;font-size:18px;word-break:break-all;font-weight:700;letter-spacing:1px}
         .key-label{color:#8899aa;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;display:block}
         .btn-group{display:flex;gap:10px;margin-top:15px}
         .btn-group button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer;transition:0.3s;font-size:14px}
@@ -35,13 +35,21 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .completed{background:rgba(0,255,136,0.05);border-color:rgba(0,255,136,0.2)}
         .key-counter{color:#556677;font-size:12px;text-align:center;margin-top:10px}
+        .key-list-btn{background:#2a2a4a;color:#fff;border:none;padding:8px;border-radius:8px;width:100%;font-size:12px;cursor:pointer;margin-top:10px}
+        .key-list-btn:hover{background:#3a3a5a}
+        .key-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:999;padding:20px;overflow-y:auto}
+        .key-popup.active{display:block}
+        .key-popup-content{background:#1a1a2e;max-width:600px;margin:40px auto;padding:30px;border-radius:16px;border:1px solid rgba(0,200,255,0.1)}
+        .key-popup-content h2{color:#00d4ff;margin-bottom:15px}
+        .key-popup-content .key-item{color:#00ff88;font-family:monospace;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+        .key-popup-close{background:#ff6b6b;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;margin-top:15px}
     </style>
 </head>
 <body>
 <div class="container">
     <div class="logo">
         <h1>🚀 FLY CHAOS</h1>
-        <p>Sistema de validação de Keys</p>
+        <p>Sistema de validação - 100 Keys</p>
     </div>
 
     <div id="missionBox">
@@ -66,22 +74,152 @@
             <button class="btn-copy" onclick="copyKey()">📋 COPIAR</button>
             <button class="btn-link" onclick="getLink()">🔗 PEGAR LINK</button>
         </div>
-        <div class="key-counter">🔄 Gere uma nova key a cada missão concluída</div>
+        <button class="key-list-btn" onclick="showAllKeys()">📜 VER TODAS AS 100 KEYS</button>
+        <div class="key-counter">🔄 Cada missão concluída gera uma key única</div>
     </div>
     <div class="status" id="statusMsg">💡 Clique em "Concluir Missões" para gerar sua Key</div>
 </div>
 
+<!-- Popup com todas as keys -->
+<div class="key-popup" id="keyPopup">
+    <div class="key-popup-content">
+        <h2>📜 TODAS AS 100 KEYS</h2>
+        <div id="allKeysList"></div>
+        <button class="key-popup-close" onclick="closePopup()">❌ FECHAR</button>
+    </div>
+</div>
+
 <script>
+    // ===== SUAS 100 KEYS =====
+    const ALL_KEYS = [
+        "key_script_fly_a7f3k9x2m4",
+        "key_script_fly_b8g4h5j6k7",
+        "key_script_fly_c9i6l8m2n4",
+        "key_script_fly_d0j7m9p3q5",
+        "key_script_fly_e1k8n4r6s7",
+        "key_script_fly_f2l9o7t3u8",
+        "key_script_fly_g3m0p8v4w9",
+        "key_script_fly_h4n1q9x5y0",
+        "key_script_fly_j4n8x2m7q1",
+        "key_script_fly_k7p3r9t5v2",
+        "key_script_fly_l2m6w8y1z4",
+        "key_script_fly_m9q4x7a2b6",
+        "key_script_fly_n5r8c1d9e3",
+        "key_script_fly_o1t7f4g8h2",
+        "key_script_fly_p6v3j9k5l1",
+        "key_script_fly_q8w2m4n7p9",
+        "key_script_fly_r3x6q1s8t5",
+        "key_script_fly_s9y5u2v4w7",
+        "key_script_fly_t1z8x6a3c9",
+        "key_script_fly_u4b7d2f9g5",
+        "key_script_fly_v6c1e8h3j7",
+        "key_script_fly_w2f9k4m6p1",
+        "key_script_fly_x8g5n2q7r4",
+        "key_script_fly_y3h1p9t6v8",
+        "key_script_fly_z7j4r5w2x9",
+        "key_script_fly_a2k8s6y1z5",
+        "key_script_fly_b5m3u7c9d2",
+        "key_script_fly_c1n9v4e8f6",
+        "key_script_fly_d8p2x5g1h7",
+        "key_script_fly_e4q6z3j9k2",
+        "key_script_fly_f7r1a8l5m4",
+        "key_script_fly_g9t5c2n6p8",
+        "key_script_fly_h3v7e1q4r9",
+        "key_script_fly_i6w2g8s5t1",
+        "key_script_fly_j1x9h4u7v3",
+        "key_script_fly_k5y6j2w8x4",
+        "key_script_fly_l8z3k7a1b5",
+        "key_script_fly_m2a5l9c4d8",
+        "key_script_fly_n7b1m6e2f9",
+        "key_script_fly_o4c8n3g7h5",
+        "key_script_fly_p9d2p1j6k8",
+        "key_script_fly_q3e7q5l9m1",
+        "key_script_fly_r6f4r8n2p7",
+        "key_script_fly_s1g9s3q5r4",
+        "key_script_fly_t5h2t7u1v6",
+        "key_script_fly_u8j6u4w9x2",
+        "key_script_fly_v2k1v8y3z7",
+        "key_script_fly_w7l5w2a6c1",
+        "key_script_fly_x4m8x9d1e5",
+        "key_script_fly_y9n3y6f7g2",
+        "key_script_fly_z1p7z4h8j6",
+        "key_script_fly_a6q2a5k9l3",
+        "key_script_fly_b3r9b1m7n4",
+        "key_script_fly_c8t4c6p2q5",
+        "key_script_fly_d2v7d9r1s8",
+        "key_script_fly_e7w1e3t5u9",
+        "key_script_fly_f4x8f2v6w1",
+        "key_script_fly_g1y5g7x3z4",
+        "key_script_fly_h9z2h4a8c6",
+        "key_script_fly_i5a7i1d9e2",
+        "key_script_fly_j2b4j8f5g7",
+        "key_script_fly_k8c9k3h1j4",
+        "key_script_fly_l4d1l6k8m5",
+        "key_script_fly_m1e7m2n9p6",
+        "key_script_fly_n6f3n5q4r8",
+        "key_script_fly_o3g8o9s1t2",
+        "key_script_fly_p7h5p4u6v9",
+        "key_script_fly_q4j2q7w3x1",
+        "key_script_fly_r9k6r1y8z5",
+        "key_script_fly_s2l1s8b4c7",
+        "key_script_fly_t8m7t5d2e1",
+        "key_script_fly_u5n4u9f6g3",
+        "key_script_fly_v1p9v2h7j8",
+        "key_script_fly_w6q5w4k1l9",
+        "key_script_fly_x3r2x7m8n5",
+        "key_script_fly_y7t8y1p4q6",
+        "key_script_fly_z4v3z6r9s2",
+        "key_script_fly_a9w7a5t1u4",
+        "key_script_fly_b6x2b8v3w9",
+        "key_script_fly_c2y5c1x7z6",
+        "key_script_fly_d7z1d4a9b3",
+        "key_script_fly_e3a8e6c2d5",
+        "key_script_fly_f8b4f9e1g7",
+        "key_script_fly_g5c9g3h6j2",
+        "key_script_fly_h1d6h7k4m8",
+        "key_script_fly_i7e2i5n9p1",
+        "key_script_fly_j3f8j1q6r5",
+        "key_script_fly_k9g5k4s2t7",
+        "key_script_fly_l5h1l8u3v9",
+        "key_script_fly_m2j7m6w1x4",
+        "key_script_fly_n8k3n9y5z2",
+        "key_script_fly_o5l6o2a7c8",
+        "key_script_fly_p1m4p7d9e6",
+        "key_script_fly_q6n9q5f2g1",
+        "key_script_fly_r2p5r8h4j3",
+        "key_script_fly_s8q1s3k7m9",
+        "key_script_fly_t4r6t9n2p5",
+        "key_script_fly_u9s2u4q8r1",
+        "key_script_fly_v3t7v6s5u2",
+        "key_script_fly_w8u4w1v9x6",
+        "key_script_fly_x5v9x7y2z3",
+        "key_script_fly_y1w6y5a8b4",
+        "key_script_fly_z6x3z2c7d9",
+        "key_script_fly_a3y8a9e1f5",
+        "key_script_fly_b9z5b4g6h2",
+        "key_script_fly_c5a1c7j3k8",
+        "key_script_fly_d1b6d2l9m4",
+        "key_script_fly_e8c2e5n7p1",
+        "key_script_fly_f3d9f8q4r6",
+        "key_script_fly_g7e5g1t2u9",
+        "key_script_fly_h2f1h6v8w3",
+        "key_script_fly_i9g7i4x5y1",
+        "key_script_fly_j6h3j2z9a8"
+    ];
+
     let currentKey = '';
-    let missionsDone = false;
+    let usedKeys = [];
 
     function generateKey() {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        let code = '';
-        for (let i = 0; i < 12; i++) {
-            code += chars.charAt(Math.floor(Math.random() * chars.length));
+        // Pega uma key aleatória que ainda não foi usada
+        const available = ALL_KEYS.filter(k => !usedKeys.includes(k));
+        if (available.length === 0) {
+            alert('❌ Todas as 100 keys já foram usadas!');
+            return null;
         }
-        return `key_script_fly_${code}`;
+        const key = available[Math.floor(Math.random() * available.length)];
+        usedKeys.push(key);
+        return key;
     }
 
     function completeMissions() {
@@ -90,7 +228,6 @@
         btn.innerHTML = '<span class="loader"></span>VALIDANDO MISSÕES...';
         document.getElementById('statusMsg').textContent = '⏳ Verificando missões...';
 
-        // Simula conclusão das missões uma por uma
         const missions = ['m1', 'm2', 'm3', 'm4'];
         let i = 0;
         const interval = setInterval(() => {
@@ -99,17 +236,22 @@
                 i++;
             } else {
                 clearInterval(interval);
-                // Missões concluídas!
                 document.getElementById('missionList').classList.add('completed');
                 document.getElementById('statusMsg').textContent = '✅ MISSÕES CONCLUÍDAS! Gerando Key...';
                 
                 setTimeout(() => {
-                    currentKey = generateKey();
-                    document.getElementById('generatedKey').textContent = currentKey;
-                    document.getElementById('keyArea').style.display = 'block';
-                    document.getElementById('missionBox').style.display = 'none';
-                    document.getElementById('statusMsg').textContent = '🎉 Key gerada com sucesso! Copie e use no Roblox.';
-                    document.getElementById('statusMsg').style.color = '#00ff88';
+                    const newKey = generateKey();
+                    if (newKey) {
+                        currentKey = newKey;
+                        document.getElementById('generatedKey').textContent = currentKey;
+                        document.getElementById('keyArea').style.display = 'block';
+                        document.getElementById('missionBox').style.display = 'none';
+                        document.getElementById('statusMsg').textContent = '🎉 Key gerada com sucesso! Copie e use no Roblox.';
+                        document.getElementById('statusMsg').style.color = '#00ff88';
+                    } else {
+                        document.getElementById('statusMsg').textContent = '❌ Todas as keys foram usadas!';
+                        document.getElementById('statusMsg').style.color = '#ff6b6b';
+                    }
                     btn.innerHTML = '✅ CONCLUÍDO';
                 }, 1000);
             }
@@ -117,32 +259,45 @@
     }
 
     function copyKey() {
+        if (!currentKey) return;
         navigator.clipboard.writeText(currentKey).then(() => {
             document.getElementById('statusMsg').textContent = '📋 KEY COPIADA! Cole no script do Roblox.';
             document.getElementById('statusMsg').style.color = '#00d4ff';
-            setTimeout(() => {
-                document.getElementById('statusMsg').textContent = '🎉 Key gerada com sucesso! Copie e use no Roblox.';
-                document.getElementById('statusMsg').style.color = '#00ff88';
-            }, 3000);
         }).catch(() => {
-            // Fallback para navegadores sem clipboard API
             const textArea = document.createElement('textarea');
             textArea.value = currentKey;
             document.body.appendChild(textArea);
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            document.getElementById('statusMsg').textContent = '📋 KEY COPIADA! (método alternativo)';
+            document.getElementById('statusMsg').textContent = '📋 KEY COPIADA!';
         });
     }
 
     function getLink() {
-        const link = `https://coolkidgaucho16-debug.github.io/FlyGuiKey?key=${currentKey}`;
+        if (!currentKey) return;
+        const link = `https://SEUSITE.com?key=${currentKey}`;
         navigator.clipboard.writeText(link).then(() => {
             document.getElementById('statusMsg').textContent = '🔗 LINK COPIADO! Compartilhe com seus amigos.';
             document.getElementById('statusMsg').style.color = '#ff6b6b';
         });
     }
+
+    function showAllKeys() {
+        const popup = document.getElementById('keyPopup');
+        const list = document.getElementById('allKeysList');
+        list.innerHTML = ALL_KEYS.map(k => `<div class="key-item">${k}</div>`).join('');
+        popup.classList.add('active');
+    }
+
+    function closePopup() {
+        document.getElementById('keyPopup').classList.remove('active');
+    }
+
+    // Fechar popup com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePopup();
+    });
 </script>
 </body>
 </html>
