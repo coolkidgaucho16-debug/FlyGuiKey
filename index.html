@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fly Key System</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+        body{background:#0a0a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+        .container{background:linear-gradient(145deg,#1a1a2e,#16213e);padding:40px;border-radius:24px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,150,255,0.15);border:1px solid rgba(0,150,255,0.1)}
+        .logo{text-align:center;margin-bottom:30px}
+        .logo h1{color:#00d4ff;font-size:28px;font-weight:800}
+        .logo p{color:#8899aa;font-size:14px;margin-top:5px}
+        .mission-box{background:#0d0d1f;padding:25px;border-radius:16px;margin-bottom:25px;border:1px solid rgba(0,200,255,0.05)}
+        .mission-box h3{color:#fff;font-size:16px;margin-bottom:12px}
+        .mission-box li{color:#aabbcc;font-size:14px;padding:6px 0;list-style:none;display:flex;align-items:center;gap:10px}
+        .mission-box li:before{content:"⬜";color:#445566}
+        .mission-box li.done:before{content:"✅";color:#00ff88}
+        .btn-mission{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#fff;border:none;padding:14px;border-radius:12px;width:100%;font-size:16px;font-weight:700;cursor:pointer;transition:0.3s}
+        .btn-mission:hover{transform:scale(1.02);box-shadow:0 8px 30px rgba(0,200,255,0.3)}
+        .btn-mission:disabled{opacity:0.5;cursor:not-allowed}
+        .key-area{display:none;animation:fadeIn 0.5s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .key-display{background:#0d0d1f;padding:18px;border-radius:12px;margin:20px 0;text-align:center;border:2px solid rgba(0,255,136,0.2)}
+        .key-display span{color:#00ff88;font-family:monospace;font-size:20px;word-break:break-all;font-weight:700;letter-spacing:1px}
+        .key-label{color:#8899aa;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;display:block}
+        .btn-group{display:flex;gap:10px;margin-top:15px}
+        .btn-group button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer;transition:0.3s;font-size:14px}
+        .btn-copy{background:#00ff88;color:#0a0a1a}
+        .btn-copy:hover{background:#00cc66;transform:scale(1.02)}
+        .btn-link{background:#ff6b6b;color:#fff}
+        .btn-link:hover{background:#cc5555;transform:scale(1.02)}
+        .status{text-align:center;margin-top:15px;color:#ffd93d;font-size:14px;min-height:25px}
+        .loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.1);border-top-color:#00d4ff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:10px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .completed{background:rgba(0,255,136,0.05);border-color:rgba(0,255,136,0.2)}
+        .key-counter{color:#556677;font-size:12px;text-align:center;margin-top:10px}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">
+        <h1>🚀 FLY CHAOS</h1>
+        <p>Sistema de validação de Keys</p>
+    </div>
+
+    <div id="missionBox">
+        <div class="mission-box" id="missionList">
+            <h3>📋 Complete as missões:</h3>
+            <ul>
+                <li id="m1">Entrar no servidor</li>
+                <li id="m2">Ficar 5 minutos online</li>
+                <li id="m3">Dar join em 3 partidas</li>
+                <li id="m4">Pegar 10 kills</li>
+            </ul>
+        </div>
+        <button class="btn-mission" id="btnMission" onclick="completeMissions()">🎯 CONCLUIR MISSÕES</button>
+    </div>
+
+    <div class="key-area" id="keyArea">
+        <div class="key-display">
+            <span class="key-label">🔑 SUA KEY GERADA</span>
+            <span id="generatedKey">key_script_fly_xxxxx</span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-copy" onclick="copyKey()">📋 COPIAR</button>
+            <button class="btn-link" onclick="getLink()">🔗 PEGAR LINK</button>
+        </div>
+        <div class="key-counter">🔄 Gere uma nova key a cada missão concluída</div>
+    </div>
+    <div class="status" id="statusMsg">💡 Clique em "Concluir Missões" para gerar sua Key</div>
+</div>
+
+<script>
+    let currentKey = '';
+    let missionsDone = false;
+
+    function generateKey() {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let code = '';
+        for (let i = 0; i < 12; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return `key_script_fly_${code}`;
+    }
+
+    function completeMissions() {
+        const btn = document.getElementById('btnMission');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loader"></span>VALIDANDO MISSÕES...';
+        document.getElementById('statusMsg').textContent = '⏳ Verificando missões...';
+
+        // Simula conclusão das missões uma por uma
+        const missions = ['m1', 'm2', 'm3', 'm4'];
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < missions.length) {
+                document.getElementById(missions[i]).classList.add('done');
+                i++;
+            } else {
+                clearInterval(interval);
+                // Missões concluídas!
+                document.getElementById('missionList').classList.add('completed');
+                document.getElementById('statusMsg').textContent = '✅ MISSÕES CONCLUÍDAS! Gerando Key...';
+                
+                setTimeout(() => {
+                    currentKey = generateKey();
+                    document.getElementById('generatedKey').textContent = currentKey;
+                    document.getElementById('keyArea').style.display = 'block';
+                    document.getElementById('missionBox').style.display = 'none';
+                    document.getElementById('statusMsg').textContent = '🎉 Key gerada com sucesso! Copie e use no Roblox.';
+                    document.getElementById('statusMsg').style.color = '#00ff88';
+                    btn.innerHTML = '✅ CONCLUÍDO';
+                }, 1000);
+            }
+        }, 400);
+    }
+
+    function copyKey() {
+        navigator.clipboard.writeText(currentKey).then(() => {
+            document.getElementById('statusMsg').textContent = '📋 KEY COPIADA! Cole no script do Roblox.';
+            document.getElementById('statusMsg').style.color = '#00d4ff';
+            setTimeout(() => {
+                document.getElementById('statusMsg').textContent = '🎉 Key gerada com sucesso! Copie e use no Roblox.';
+                document.getElementById('statusMsg').style.color = '#00ff88';
+            }, 3000);
+        }).catch(() => {
+            // Fallback para navegadores sem clipboard API
+            const textArea = document.createElement('textarea');
+            textArea.value = currentKey;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            document.getElementById('statusMsg').textContent = '📋 KEY COPIADA! (método alternativo)';
+        });
+    }
+
+    function getLink() {
+        const link = `https://.github.io/FlyGuiKey?key=${currentKey}`;
+        navigator.clipboard.writeText(link).then(() => {
+            document.getElementById('statusMsg').textContent = '🔗 LINK COPIADO! Compartilhe com seus amigos.';
+            document.getElementById('statusMsg').style.color = '#ff6b6b';
+        });
+    }
+</script>
+</body>
+</html>
